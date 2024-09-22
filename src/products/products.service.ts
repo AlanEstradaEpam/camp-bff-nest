@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   CurrencyCode,
   Product,
+  ProductSKU,
   ProductsResponse,
   ProductVariant,
 } from './interfaces/product.interface';
@@ -99,12 +100,24 @@ export class ProductsService {
     };
   }
 
+  async getProductBySKU(sku: ProductSKU): Promise<Product> {
+    const rootSKU = sku.split('-')[0];
+    const product = await this.magentoService.get<MagentoProduct>(`products/${rootSKU}`);
+    return this.transformMagentoProductToProduct(product, sku);
+  }
+
   private async transformMagentoProductToProduct(
     magentoProduct: MagentoProduct,
+    variantSKU: ProductSKU = null,
   ): Promise<Product> {
     const productVariants = await this.getProductVariantsBySku(
       magentoProduct.sku,
     );
+
+    let masterVariant = productVariants[0];
+    if (variantSKU) {
+      masterVariant = (productVariants.find((variant) => variant.sku === variantSKU) ?? productVariants[0])
+    }
 
     const descriptionAttribute = magentoProduct.custom_attributes.find(
       (attr) => attr.attribute_code === 'description',
@@ -123,12 +136,12 @@ export class ProductsService {
       name: magentoProduct.name,
       description,
       variants: productVariants,
-      masterVariant: productVariants[0], // TODO: Review if this is correct
+      masterVariant,
     };
 
     return product;
   }
-
+  
   private transformMagentoProductVariantToProductVariant(
     magentoProductAttributesMapped: MagentoProductAttributesMapped,
   ): (
