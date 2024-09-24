@@ -1,33 +1,40 @@
+import { CustomerId, PriceValue } from 'src/magento/common.interfaces';
 import {
   Product,
   ProductId,
   ProductSKU,
-  ProductType,
+  ProductVariant,
 } from 'src/products/interfaces/product.interface';
 
-export type ShoppingCartId = string;
-export type CustomerId = string;
+export type CartId = string;
 
-export interface Price {
+export interface CartInnerLineItem extends CartLineItem {
+  id: ProductId;
+  variant: ProductVariant;
+  quantity: number;
+  totalPrice: number;
   currencyCode: string;
-  centAmount: number;
 }
 
-export interface ProductItem {
+export interface CartLineItem {
   item_id: ProductId;
   sku: ProductSKU;
   qty: number;
   name: Product['name'];
   price: number;
-  product_type: ProductType;
+  product_type: string;
   quote_id: string;
 }
 
-export interface ShoppingCart {
-  id: ShoppingCartId;
+export interface Cart {
+  id: CartId;
   version: number;
   customerId: CustomerId;
-  lineItems: ProductItem[];
-  totalPrice: Price;
+  lineItems: CartLineItem[];
+  totalPrice: PriceValue;
   totalQuantity: number;
+}
+
+export interface CartResponse extends Cart {
+  lineItems: CartInnerLineItem[];
 }

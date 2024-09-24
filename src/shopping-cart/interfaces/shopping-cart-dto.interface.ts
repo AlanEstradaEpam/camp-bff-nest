@@ -1,41 +1,39 @@
-import {
-  ProductId,
-  ProductSKU,
-} from 'src/products/interfaces/product.interface';
-import { ProductItem } from './shopping-cart';
+import { ProductSKU } from 'src/products/interfaces/product.interface';
+import { CartLineItem } from './shopping-cart';
+import { MagentoPaymentMethod } from '../../magento/interfaces/magento.carts.set-shipping-address.dto.interface';
 
-export enum UpdateAction {
-  ADD_PRODUCT_ITEM = 'AddLineItem',
-  UPDATE_PRODUCT_ITEM_QUANTITY = 'ChangeLineItemQuantity',
-  REMOVE_PRODUCT_ITEM = 'RemoveLineItem',
+export enum UpdateCartAction {
+  ADD_LINE_ITEM = 'AddLineItem',
+  CHANGE_LINE_ITEM_QUANTITY = 'ChangeLineItemQuantity',
+  REMOVE_LINE_ITEM = 'RemoveLineItem',
   SET_SHIPPING_ADDRESS = 'SetShippingAddress',
 }
 
-export interface AddProductItemDTO {
-  action: UpdateAction.ADD_PRODUCT_ITEM;
+export interface AddLineItemDto {
+  action: UpdateCartAction.ADD_LINE_ITEM;
   AddLineItem: {
     variantId: ProductSKU;
     quantity: number;
   };
 }
 
-export interface UpdateProductItemQtyDTO {
-  action: UpdateAction.UPDATE_PRODUCT_ITEM_QUANTITY;
+export interface ChangeLineItemQuantityDto {
+  action: UpdateCartAction.CHANGE_LINE_ITEM_QUANTITY;
   ChangeLineItemQuantity?: {
-    lineItemId: ProductId;
+    lineItemId: number;
     quantity: number;
   };
 }
 
-export interface RemoveProductItemDTO {
-  action: UpdateAction.REMOVE_PRODUCT_ITEM;
+export interface RemoveLineItemDto {
+  action: UpdateCartAction.REMOVE_LINE_ITEM;
   RemoveLineItem: {
-    productItemId: ProductId;
+    lineItemId: number;
   };
 }
 
 export interface SetShippingAddressDto {
-  action: UpdateAction.SET_SHIPPING_ADDRESS;
+  action: UpdateCartAction.SET_SHIPPING_ADDRESS;
   SetShippingAddress: {
     country: string;
     firstName: string;
@@ -50,13 +48,26 @@ export interface SetShippingAddressDto {
 }
 
 export type UpdateCartDto = { version: number } & (
-  | AddProductItemDTO
-  | UpdateProductItemQtyDTO
-  | RemoveProductItemDTO
+  | AddLineItemDto
+  | ChangeLineItemQuantityDto
+  | RemoveLineItemDto
   | SetShippingAddressDto
 );
 
-// TODO: Use TS Property mapping to avoid re-mapping for a couple of keys on the service
-export interface AddUpdateItemResponse extends ProductItem {}
+export interface AddUpdateItemResponse extends CartLineItem {}
 
-export type RemoveItemResponse = boolean;
+export type RemoveLineItemResponse = boolean;
+
+export interface SetShippingAddressResponse {
+  payment_methods: PaymentMethod[];
+  totals: CartTotals;
+}
+
+export interface PaymentInformationResponse {
+  payment_methods: PaymentMethod[];
+  totals: CartTotals;
+}
+
+interface PaymentMethod extends MagentoPaymentMethod {}
+
+interface CartTotals {}

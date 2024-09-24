@@ -1,1 +1,3 @@
-export const getCurrentPage = (offset: number, pageSize: number) => Math.floor(offset / pageSize) + 1;
+export const getCurrentPage = (offset: number, pageSize: number) => {
+  return Math.floor(offset / pageSize) + 1;
+};
