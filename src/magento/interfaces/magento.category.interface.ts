@@ -9,5 +9,4 @@ export interface MagentoCategory {
   level: number;
   product_count: number;
   children_data: MagentoCategory[];
-  description?: string | null | undefined;
 }

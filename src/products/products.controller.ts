@@ -1,6 +1,10 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { Product, ProductSKU, ProductsResponse } from './interfaces/product.interface';
+import {
+  Product,
+  ProductSKU,
+  ProductsResponse,
+} from './interfaces/product.interface';
 import { CategoryId } from 'src/categories/interfaces/category.interface';
 
 @Controller('products')
@@ -18,7 +22,7 @@ export class ProductsController {
       offset,
       limit,
     );
-  };
+  }
 
   @Get(':sku')
   getProductBySKU(@Param('sku') sku: ProductSKU): Promise<Product> {
