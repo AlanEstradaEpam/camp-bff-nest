@@ -12,7 +12,7 @@ import { rootModules } from './modules';
       isGlobal: true,
       load: [globalConfig]
     }),
-    ...rootModules
+    ...rootModules,
   ],
   controllers: [AppController],
   providers: [AppService],
